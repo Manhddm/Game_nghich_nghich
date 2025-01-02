@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -8,8 +9,10 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform groundCheck;
-
-    private bool canJump = false;
+    public int countJump = 0;
+    public bool canJump = false;
+    public float jumpTimeCounter = 0f;
+    public float jumpTime = 0.2f;
     private Rigidbody2D rb2d;
     /*
      * Cac task
@@ -45,11 +48,22 @@ public class PlayerController : MonoBehaviour
     
     private void HandleJump()
     {
-        if (Input.GetButtonDown("Jump") && canJump)
+        // if (Input.GetButtonDown("Jump") && canJump)
+        // {
+        //     rb2d.AddForce(Vector2.up * jumpForce);
+        //     
+        // }
+        // canJump = Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer);
+        if (Input.GetButtonDown("Jump") && countJump < 2 && jumpTimeCounter >= jumpTime)
         {
-            rb2d.AddForce(Vector2.up * jumpForce);
-            
+            Debug.Log(countJump);
+            rb2d.linearVelocity = Vector2.up * jumpForce;
+            countJump++;
+            jumpTimeCounter = 0;
         }
-        canJump = Physics2D.OverlapCircle(groundCheck.position, 0.1f, groundLayer);
+        canJump = Physics2D.OverlapCircle(groundCheck.position, 0.001f, groundLayer);
+        //canJump tra ve true neu co va cham voi groundLayer
+        if (canJump) countJump = 0;
+        jumpTimeCounter += Time.deltaTime;
     }
 }
